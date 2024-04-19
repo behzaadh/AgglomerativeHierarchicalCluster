@@ -54,5 +54,12 @@ int main() {
     clustering.print();
     clustering.print_label();
 
+    //print cluster index for each data point
+    auto cluster_idx = clustering.cluster_idx();
+
+    for (int i = 0; i < cluster_idx.size(); ++i) {
+        cout << "Data point [" << data(0,i) << "," << data(1,i) << "] is in cluster " << cluster_idx[i] << endl;
+    }
+
     return 0;
 }

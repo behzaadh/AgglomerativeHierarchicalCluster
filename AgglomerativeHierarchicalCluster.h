@@ -28,10 +28,11 @@ public:
     }
 
     void init_clusters() {
-        _label.resize(_N);
+        Eigen::VectorXi index(1);
         for (int i = 0; i < _data.cols(); ++i) {
             _clusters[i] = _data.col(i);
-            _label[i] = i;
+            index[0] = i;
+            _label[i] = index;
         }
     }
 
@@ -69,13 +70,13 @@ public:
     void merge_and_form_new_clusters(int ci_id, int cj_id) {
         Eigen::MatrixXd merged_cluster(_data.rows(), _clusters[ci_id].cols() + _clusters[cj_id].cols());
         merged_cluster << _clusters[ci_id], _clusters[cj_id];
-        // Eigen::VectorXi merged_label(_label[ci_id].size() + _label[cj_id].size());
-        // merged_label << _label[ci_id], _label[cj_id];
-        _label[cj_id] = ci_id;
-        _label[ci_id] = ci_id;
+        Eigen::VectorXi merged_label(_label[ci_id].size() + _label[cj_id].size());
+        merged_label << _label[ci_id], _label[cj_id];
 
         _clusters.erase(cj_id);
         _clusters[ci_id] = merged_cluster;
+        _label.erase(cj_id);
+        _label[ci_id] = merged_label;
     }
 
     /**
@@ -85,10 +86,25 @@ public:
      * The resulting clusters are stored in the data structure of the class.
      */
     void run_algorithm() {
+        int loop_count = 0;
         while (_clusters.size() > static_cast<size_t>(_K)) {
             auto closest_clusters = find_closest_clusters();
             merge_and_form_new_clusters(closest_clusters.first, closest_clusters.second);
+            loop_count++;
         }
+    }
+
+    Eigen::VectorXi cluster_idx() const {
+        Eigen::VectorXi res(_N);
+        int cluster_id = 0;
+        for (const auto& [_, idx] : _label) {
+            for (int i = 0; i < idx.rows(); ++i) {
+                res[idx(i)] = cluster_id;
+            }
+            cluster_id++;
+        }
+
+        return res;
     }
 
     /**
@@ -97,7 +113,7 @@ public:
     void print() const {
         int cluster_id = 0;
         for (const auto& [id, points] : _clusters) {
-            std::cout << "Cluster: " << cluster_id++ << std::endl;
+            std::cout << "Cluster: " << cluster_id++ << ", Cluster size: " << points.cols() <<std::endl;
             for (int i = 0; i < points.cols(); ++i) {
                 std::cout << "    ";
                 for (int j = 0; j < points.rows(); ++j) {
@@ -113,8 +129,13 @@ public:
      */
     void print_label() const {
         int label_id = 0;
-        for (int i = 0; i < _label.size(); ++i) {
-            std::cout << "Cluster index of cell [" << i << "] is: " << _label(i) << std::endl;
+        for (const auto& [_, idx] : _label) {
+            std::cout << "Cluster: " << label_id++ << ", Cluster size: " << idx.rows() <<std::endl;
+            std::cout << "    ";
+            for (int i = 0; i < idx.rows(); ++i) {
+                std::cout << idx(i) << " ";
+            }
+            std::cout << std::endl;
         }
     }
 
@@ -138,5 +159,5 @@ private:
     int _K;
     DistanceFunction _measure;
     std::map<int, Eigen::MatrixXd> _clusters;
-    Eigen::VectorXi _label;
+    std::map<int, Eigen::VectorXi> _label;
 };
