@@ -23,14 +23,15 @@ double distance(const Eigen::ArrayXd& p, const Eigen::ArrayXd& q) {
  */
 double single_link(const Eigen::MatrixXd& ci, const Eigen::MatrixXd& cj) {
     double min_dist = std::numeric_limits<double>::infinity();
-    for (int i = 0; i < ci.cols(); ++i) {
-        for (int j = 0; j < cj.cols(); ++j) {
-            double dist = distance(ci.col(i), cj.col(j));
+    for (int i = 0; i < ci.rows(); ++i) {
+        for (int j = 0; j < cj.rows(); ++j) {
+            double dist = distance(ci.row(i), cj.row(j));
             if (dist < min_dist) {
                 min_dist = dist;
             }
         }
     }
+
     return min_dist;
 }
 

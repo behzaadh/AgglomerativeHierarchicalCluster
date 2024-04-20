@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Add the external project directory
-SET(EIGEN3_INCLUDE_DIR "C:/Users/behzadh/Documents/DTU_Gitlab/eigen-3.4.0") # Here you must add the path of EIGEN3_INCLUDE_DIR link
+SET(EIGEN3_INCLUDE_DIR "YOUR EIGEN PATH") # Here you must add the path of EIGEN3_INCLUDE_DIR link
 SET(CMAKE_MODULE_PATH "${EIGEN3_INCLUDE_DIR}/cmake")
 SET(EIGEN3_DIR "${EIGEN3_INCLUDE_DIR}/cmake")
 

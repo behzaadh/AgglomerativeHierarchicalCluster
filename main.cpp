@@ -6,16 +6,16 @@ using namespace std;
 
 /**
  * @brief The main function of the program.
- * 
+ *
  * This function reads data from a file, performs agglomerative hierarchical clustering on the data,
  * and prints the resulting clusters.
- * 
+ *
  * @return 0 if the program executed successfully, 1 otherwise.
  */
 int main() {
     // Define the dimensions of the matrix
-    int rows = 2;
-    int cols = 100;
+    int rows = 100;
+    int cols = 2;
 
     // Create an Eigen::MatrixXd to hold the data
     MatrixXd data(rows, cols);
@@ -28,8 +28,8 @@ int main() {
     }
 
     // Read data from the file into the Eigen::MatrixXd
-    for (int col = 0; col < cols; ++col) {
-        for (int row = 0; row < rows; ++row) {
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < cols; ++col) {
             if (!(inputFile >> data(row, col))) {
                 cerr << "Error: Failed to read data from input file!" << endl;
                 return 1;
@@ -58,7 +58,7 @@ int main() {
     auto cluster_idx = clustering.cluster_idx();
 
     for (int i = 0; i < cluster_idx.size(); ++i) {
-        cout << "Data point [" << data(0,i) << "," << data(1,i) << "] is in cluster " << cluster_idx[i] << endl;
+        cout << "Data point [" << data(i,0) << "," << data(i,1) << "] is in cluster " << cluster_idx[i] << endl;
     }
 
     return 0;

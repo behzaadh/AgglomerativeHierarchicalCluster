@@ -22,15 +22,15 @@ public:
      * @param M The linkage method to be used for clustering.
      */
     AgglomerativeHierarchicalClustering(const Eigen::MatrixXd& data, int K, int M)
-        : _data(data), _N(data.cols()), _K(K) {
+        : _data(data), _N(data.rows()), _K(K) {
         _measure = get_distance_measure(M);
         init_clusters();
     }
 
     void init_clusters() {
         Eigen::VectorXi index(1);
-        for (int i = 0; i < _data.cols(); ++i) {
-            _clusters[i] = _data.col(i);
+        for (int i = 0; i < _data.rows(); ++i) {
+            _clusters[i] = _data.row(i);
             index[0] = i;
             _label[i] = index;
         }
@@ -68,7 +68,7 @@ public:
      * @param cj_id The ID of the second cluster to merge.
      */
     void merge_and_form_new_clusters(int ci_id, int cj_id) {
-        Eigen::MatrixXd merged_cluster(_data.rows(), _clusters[ci_id].cols() + _clusters[cj_id].cols());
+        Eigen::MatrixXd merged_cluster(_clusters[ci_id].rows() + _clusters[cj_id].rows(), _data.cols());
         merged_cluster << _clusters[ci_id], _clusters[cj_id];
         Eigen::VectorXi merged_label(_label[ci_id].size() + _label[cj_id].size());
         merged_label << _label[ci_id], _label[cj_id];
@@ -113,7 +113,7 @@ public:
     void print() const {
         int cluster_id = 0;
         for (const auto& [id, points] : _clusters) {
-            std::cout << "Cluster: " << cluster_id++ << ", Cluster size: " << points.cols() <<std::endl;
+            std::cout << "Cluster: " << cluster_id++ << ", Cluster size: " << points.rows() <<std::endl;
             for (int i = 0; i < points.cols(); ++i) {
                 std::cout << "    ";
                 for (int j = 0; j < points.rows(); ++j) {
